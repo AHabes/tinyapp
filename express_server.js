@@ -8,8 +8,8 @@ app.set("view engine", "ejs");
 const PORT = 8080;
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  'b2xVn2': "http://www.lighthouselabs.ca",
+  '9sm5xK': "http://www.google.com"
 };
 
 function generateRandomString() {
@@ -54,7 +54,8 @@ app.get('/urls/:shortURL', (req, res) => {
 
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
-  console.log(req.body);  // Log the POST request body to the console
+  urlDatabase[generateRandomString()] = longURL;
+  console.log(urlDatabase);
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
