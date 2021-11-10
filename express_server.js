@@ -12,7 +12,7 @@ const urlDatabase = {
   '9sm5xK': "http://www.google.com"
 };
 
-function generateRandomString() {
+const generateRandomString = function() {
   let result = '';
   const length = 6;
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -20,10 +20,10 @@ function generateRandomString() {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
-}
+};
 
 app.listen(8080, () => {
-  console.log(`The server is up and listening on port ${PORT}`)
+  console.log(`The server is up and listening on port ${PORT}`);
 });
 
 app.get('/', (req, res) => {
@@ -52,10 +52,15 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
+app.get('/u/:shortURL', (req, res) => {
+  const longUrl = urlDatabase[req.params.shortURL];
+  console.log('redirecting to ', longUrl);
+  res.redirect(longUrl);
+});
+
 app.post('/urls', (req, res) => {
   const shorURL = generateRandomString();
   urlDatabase[shorURL] = req.body.longURL;
-  console.log(urlDatabase);
   res.redirect(`/urls/${shorURL}`);
 //  res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
