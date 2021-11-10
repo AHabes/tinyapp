@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require("body-parser");
+const url = require("url");
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -12,7 +13,7 @@ const urlDatabase = {
   '9sm5xK': "http://www.google.com"
 };
 
-const generateRandomString = function() {
+const generateRandomString = function () {
   let result = '';
   const length = 6;
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -65,4 +66,10 @@ app.post('/urls', (req, res) => {
 //  res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
-console.log(generateRandomString());
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  console.log(urlDatabase);
+  res.redirect('/urls');
+
+
+});
