@@ -5,7 +5,7 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
-const PORT = 8080;
+const PORT = 3000;
 
 const urlDatabase = {
   'b2xVn2': "http://www.lighthouselabs.ca",
@@ -22,7 +22,7 @@ const generateRandomString = function() {
   return result;
 };
 
-app.listen(8080, () => {
+app.listen(PORT, () => {
   console.log(`The server is up and listening on port ${PORT}`);
 });
 
