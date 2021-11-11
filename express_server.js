@@ -36,16 +36,6 @@ const generateRandomString = function () {
   return result;
 };
 
-const checkEmail = function (email) {
-  let result = false;
-  Object.keys(users).forEach(id => {
-    if (users[id].email === email) {
-      result = true;
-    }
-  });
-  return result;
-};
-
 const getUserId = function (email) {
   return Object.keys(users).filter(id => users[id].email === email);
 };
@@ -102,24 +92,25 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
+
   const email = req.body.email;
   const password = req.body.password;
   if (email === "" || password === "") {
     res.statusCode = 400;
     res.send("email and password fields can't be empty");
-  }
-  if (checkEmail(email)) {
+  } else if (getUserId(email).length) {
     res.statusCode = 400;
-    res.send("email already exists");
+    res.send(`The email ${email} already exists`);
+  } else {
+    const id = generateRandomString();
+    users[id] = {
+      id,
+      email,
+      password
+    };
+    res.cookie('user_id', id);
+    res.redirect('/urls');
   }
-  const id = generateRandomString();
-  users[id] = {
-    id,
-    email,
-    password
-  };
-  res.cookie('user_id', id);
-  res.redirect('/urls');
 });
 
 app.post('/urls', (req, res) => {
