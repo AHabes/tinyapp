@@ -26,7 +26,7 @@ const users = {
     password: "dishwasher-funk"
   }
 };
-const generateRandomString = function() {
+const generateRandomString = function () {
   let result = '';
   const length = 6;
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -36,7 +36,7 @@ const generateRandomString = function() {
   return result;
 };
 
-const checkEmail = function(email) {
+const checkEmail = function (email) {
   let result = false;
   Object.keys(users).forEach(id => {
     if (users[id].email === email) {
@@ -45,6 +45,11 @@ const checkEmail = function(email) {
   });
   return result;
 };
+
+const getUserId = function (email) {
+  return Object.keys(users).filter(id => users[id].email === email);
+};
+
 app.listen(PORT, () => {
   console.log(`The server is up and listening on port ${PORT}`);
 });
@@ -73,7 +78,6 @@ app.get("/hello", (req, res) => {
 
 app.get('/urls', (req, res) => {
   const templateVars = {urls: urlDatabase, user: users[req.cookies["user_id"]]};
-  console.log(templateVars);
   res.render('urls_index', templateVars);
 });
 
@@ -114,7 +118,6 @@ app.post('/register', (req, res) => {
     email,
     password
   };
-  console.log(users);
   res.cookie('user_id', id);
   res.redirect('/urls');
 });
@@ -136,9 +139,15 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
-  console.log(req.body.username);
-  res.redirect('/urls');
+  const email = req.body.email;
+  const user_id = getUserId(email);
+  if (user_id.length === 0) {
+    res.statusCode = 400;
+    res.send(`The user with email address ${email} is not found`);
+  } else {
+    res.cookie('user_id', user_id);
+    res.redirect('/urls');
+  }
 });
 
 app.post('/logout', (req, res) => {
