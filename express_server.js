@@ -1,7 +1,9 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const app = express();
+app.use(cookieParser());
+
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
@@ -12,7 +14,7 @@ const urlDatabase = {
   '9sm5xK': "http://www.google.com"
 };
 
-const generateRandomString = function () {
+const generateRandomString = function() {
   let result = '';
   const length = 6;
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -39,14 +41,13 @@ app.get("/hello", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  console.log('req.cookies: ', req.cookies);
   const templateVars = {urls: urlDatabase, username: req.cookies["username"]};
   res.render('urls_index', templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    username: req.cookies["username"],
-  };
+  const templateVars = {username: req.cookies["username"]};
   res.render("urls_new", templateVars);
 });
 
@@ -83,6 +84,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
-  console.log(req.body.username)
+  console.log(req.body.username);
   res.redirect('/urls');
 });

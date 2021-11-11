@@ -16,18 +16,27 @@
             <div class="col ">
             </div>
 
-            <div class="col padding-right:0px">
-                <form class="form-inline" action="/login" method="POST">
-                    <div class="form-group">
-                        <input class="form-control" type="text" name="username" placeholder="Username"
-                               style="width: 200px; margin: 1em">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </div>
-                </form>
+            <% if(username){ %>
+                <div class="col">
+                    <form class="form-inline" action="/logout" method="POST">
+                        <div class="form-group" style="margin-right:250px">
+                            <h6 style="margin: 10px;">Logged In As: <%= username%>!</h6>
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </div>
+                    </form>
+                </div>
 
-            </div>
-
-
+            <% } else{ %>
+                <div class="col padding-right:0px">
+                    <form class="form-inline" action="/login" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="username" placeholder="Username"
+                                   style="width: 200px; margin-right:10px;">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            <% } %>
         </div>
     </nav>
 </header>
