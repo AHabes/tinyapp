@@ -58,6 +58,11 @@ app.get('/register', (req, res) => {
 
 });
 
+app.get('/login', (req, res) => {
+  res.render('login');
+
+});
+
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
