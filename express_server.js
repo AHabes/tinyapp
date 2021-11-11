@@ -32,6 +32,11 @@ app.get('/', (req, res) => {
   res.send("Hello World!");
 });
 
+app.get('/register', (req, res) => {
+  res.render('registration');
+
+});
+
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
