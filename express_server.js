@@ -26,7 +26,7 @@ const users = {
     password: "dishwasher-funk"
   }
 };
-const generateRandomString = function () {
+const generateRandomString = function() {
   let result = '';
   const length = 6;
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -58,13 +58,13 @@ app.get("/hello", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  console.log('req.cookies: ', req.cookies);
-  const templateVars = {urls: urlDatabase, username: req.cookies["username"]};
+  const templateVars = {urls: urlDatabase, user: users[req.cookies["user_id"]]};
+  console.log(templateVars);
   res.render('urls_index', templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {username: req.cookies["username"]};
+  const templateVars = {user: users[req.cookies["user_id"]]};
   res.render("urls_new", templateVars);
 });
 
@@ -72,7 +72,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render('urls_show', templateVars);
 });
@@ -94,7 +94,7 @@ app.post('/register', (req, res) => {
   };
   console.log(users);
   res.cookie('user_id', id);
-  res.redirect('/urls')
+  res.redirect('/urls');
 });
 
 app.post('/urls', (req, res) => {
@@ -123,3 +123,4 @@ app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
 });
+
