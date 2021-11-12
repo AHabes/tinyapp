@@ -7,7 +7,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
-const PORT = 3000;
+const PORT = 8080;
 
 const urlDatabase = {
   'b2xVn2': "http://www.lighthouselabs.ca",
@@ -72,8 +72,13 @@ app.get('/urls', (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {user: users[req.cookies["user_id"]]};
-  res.render("urls_new", templateVars);
+  const user = users[req.cookies["user_id"]];
+  const templateVars = {user};
+  if (user) {
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/urls/:shortURL', (req, res) => {
@@ -114,9 +119,14 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  const shorURL = generateRandomString();
-  urlDatabase[shorURL] = req.body.longURL;
-  res.redirect(`/urls/${shorURL}`);
+  const user = users[req.cookies["user_id"]];
+  if (user) {
+    const shorURL = generateRandomString();
+    urlDatabase[shorURL] = req.body.longURL;
+    res.redirect(`/urls/${shorURL}`);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.post('/urls/:shortURL', (req, res) => {
