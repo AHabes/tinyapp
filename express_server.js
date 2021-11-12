@@ -42,7 +42,7 @@ const generateRandomString = function() {
   return result;
 };
 
-const getUserId = function(email) {
+const getUserByEmail = function(email, users) {
   return Object.keys(users).filter(id => users[id].email === email);
 };
 
@@ -130,7 +130,7 @@ app.post('/register', (req, res) => {
   if (email === "" || password === "") {
     res.statusCode = 400;
     res.send("<html><body><h3>email and password fields can't be empty</h3></body></html>");
-  } else if (getUserId(email).length) {
+  } else if (getUserByEmail(email, users).length) {
     res.statusCode = 400;
     res.send(`The email ${email} already exists`);
   } else {
@@ -183,7 +183,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const userId = getUserId(email);
+  const userId = getUserByEmail(email, users);
   if (email === "" || password === "") {
     res.send("<html><body><h3>Username and password can't be empty</h3></body></html>");
   } else if (userId.length === 0) {
