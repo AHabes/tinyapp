@@ -126,10 +126,14 @@ app.post('/register', (req, res) => {
 
 app.post('/urls', (req, res) => {
   const user = users[req.cookies["user_id"]];
+  let longURL = req.body.longURL;
   if (user) {
     const shorURL = generateRandomString();
     urlDatabase[shorURL] = {};
-    urlDatabase[shorURL].longURL = req.body.longURL;
+    if (!longURL.includes('http')) {
+      longURL = 'https://' + longURL;
+    }
+    urlDatabase[shorURL].longURL = longURL;
     urlDatabase[shorURL].userID = user.id;
     res.redirect(`/urls/${shorURL}`);
   } else {
