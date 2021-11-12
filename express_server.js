@@ -32,6 +32,7 @@ const users = {
     password: "dishwasher-funk"
   }
 };
+
 const generateRandomString = function() {
   let result = '';
   const length = 6;
@@ -44,6 +45,10 @@ const generateRandomString = function() {
 
 const getUserId = function(email) {
   return Object.keys(users).filter(id => users[id].email === email);
+};
+
+const urlsForUser = function(id) {
+  return Object.keys(urlDatabase).filter(shortURL => urlDatabase[shortURL].userID === id);
 };
 
 app.listen(PORT, () => {
@@ -73,8 +78,15 @@ app.get("/hello", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const templateVars = {urls: urlDatabase, user: users[req.cookies["user_id"]]};
-  res.render('urls_index', templateVars);
+  const user = users[req.cookies["user_id"]];
+  if (user) {
+    const userUrls = Object.fromEntries(
+      Object.entries(urlDatabase).filter(([_, value]) => value.userID === user.id));
+    const templateVars = {urls: userUrls, user: users[req.cookies["user_id"]]};
+    res.render('urls_index', templateVars);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -88,12 +100,22 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[req.cookies["user_id"]]
-  };
-  res.render('urls_show', templateVars);
+  const user = users[req.cookies["user_id"]];
+  if (user) {
+    console.log('urlsForUser(user.id) ', urlsForUser(user.id));
+    if (urlsForUser(user.id).includes(req.params.shortURL)) {
+      const templateVars = {
+        shortURL: req.params.shortURL,
+        longURL: urlDatabase[req.params.shortURL].longURL,
+        user
+      };
+      res.render('urls_show', templateVars);
+    } else {
+      res.send("Invalid tiny url");
+    }
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/u/:shortURL', (req, res) => {
