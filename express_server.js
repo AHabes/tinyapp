@@ -56,7 +56,7 @@ app.listen(PORT, () => {
 });
 
 app.get('/', (req, res) => {
-  res.send("Hello World!");
+  res.send("<html><body><b>Welcome to the Tinyapp, to start, please register</b></body></html>\n");
 });
 
 app.get('/register', (req, res) => {
