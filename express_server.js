@@ -26,7 +26,7 @@ const users = {
     password: "dishwasher-funk"
   }
 };
-const generateRandomString = function () {
+const generateRandomString = function() {
   let result = '';
   const length = 6;
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -36,7 +36,7 @@ const generateRandomString = function () {
   return result;
 };
 
-const getUserId = function (email) {
+const getUserId = function(email) {
   return Object.keys(users).filter(id => users[id].email === email);
 };
 
@@ -131,13 +131,19 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 app.post('/login', (req, res) => {
   const email = req.body.email;
-  const user_id = getUserId(email);
-  if (user_id.length === 0) {
-    res.statusCode = 400;
+  const password = req.body.password;
+  const userId = getUserId(email);
+  if (userId.length === 0) {
+    res.statusCode = 403;
     res.send(`The user with email address ${email} is not found`);
   } else {
-    res.cookie('user_id', user_id);
-    res.redirect('/urls');
+    if (password !== users[userId].password) {
+      res.statusCode = 403;
+      res.send(`Either username or password is incorrect`);
+    } else {
+      res.cookie('user_id', userId);
+      res.redirect('/urls');
+    }
   }
 });
 
