@@ -111,7 +111,7 @@ app.get('/urls/:shortURL', (req, res) => {
       };
       res.render('urls_show', templateVars);
     } else {
-      res.send("Invalid tiny url");
+      res.send("<html><body><h3 style='color:red'>Ooops that is an invalid tiny url!</h3></body></html>");
     }
   } else {
     res.redirect('/login');
@@ -130,7 +130,8 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
   if (email === "" || password === "") {
     res.statusCode = 400;
-    res.send("email and password fields can't be empty");
+    res.send("<html><body><h3>email and password fields can't be empty</h3></body></html>");
+
   } else if (getUserId(email).length) {
     res.statusCode = 400;
     res.send(`The email ${email} already exists`);
@@ -168,22 +169,29 @@ app.post('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  console.log(urlDatabase);
-  res.redirect('/urls');
+  const user = users[req.cookies["user_id"]];
+  if (user) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const userId = getUserId(email);
-  if (userId.length === 0) {
+  if (email === "" || password === "") {
+    res.send("<html><body><h3>Username and password can't be empty</h3></body></html>");
+
+  } else if (userId.length === 0) {
     res.statusCode = 403;
-    res.send(`The user with email address ${email} is not found`);
+    res.send(`The user with email address ${email} is not found, please make sure to register first!`);
   } else {
     if (password !== users[userId].password) {
       res.statusCode = 403;
-      res.send(`Either username or password is incorrect`);
+      res.send("<html><body><h3>Either username or password is incorrect</h3></body></html>");
     } else {
       res.cookie('user_id', userId);
       res.redirect('/urls');
