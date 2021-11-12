@@ -102,7 +102,6 @@ app.get("/urls/new", (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const user = users[req.cookies["user_id"]];
   if (user) {
-    console.log('urlsForUser(user.id) ', urlsForUser(user.id));
     if (urlsForUser(user.id).includes(req.params.shortURL)) {
       const templateVars = {
         shortURL: req.params.shortURL,
@@ -119,13 +118,17 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  const longUrl = urlDatabase[req.params.shortURL];
-  console.log('redirecting to ', longUrl);
-  res.redirect(longUrl);
+  const user = users[req.cookies["user_id"]];
+  if (user) {
+
+    const longUrl = urlDatabase[req.params.shortURL];
+    res.redirect(longUrl);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.post('/register', (req, res) => {
-
   const email = req.body.email;
   const password = req.body.password;
   if (email === "" || password === "") {
