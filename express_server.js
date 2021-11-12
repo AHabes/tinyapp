@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 const app = express();
 app.use(cookieParser());
 
@@ -20,18 +21,7 @@ const urlDatabase = {
   }
 };
 
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
-};
+const users = {};
 
 const generateRandomString = function() {
   let result = '';
@@ -132,10 +122,11 @@ app.post('/register', (req, res) => {
     res.send(`The email ${email} already exists`);
   } else {
     const id = generateRandomString();
+    const hashedPassword = bcrypt.hashSync(password, 10);
     users[id] = {
       id,
       email,
-      password
+      password: hashedPassword
     };
     res.cookie('user_id', id);
     res.redirect('/urls');
@@ -183,12 +174,12 @@ app.post('/login', (req, res) => {
     res.statusCode = 403;
     res.send(`The user with email address ${email} is not found, please make sure to register first!`);
   } else {
-    if (password !== users[userId].password) {
-      res.statusCode = 403;
-      res.send("<html><body><h3>Either username or password is incorrect</h3></body></html>");
-    } else {
+    if (bcrypt.compareSync(password, users[userId].password)) {
       res.cookie('user_id', userId);
       res.redirect('/urls');
+    } else {
+      res.statusCode = 403;
+      res.send("<html><body><h3>Either username or password is incorrect</h3></body></html>");
     }
   }
 });
