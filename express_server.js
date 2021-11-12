@@ -61,20 +61,14 @@ app.get('/', (req, res) => {
 
 app.get('/register', (req, res) => {
   res.render('registration');
-
 });
 
 app.get('/login', (req, res) => {
   res.render('login');
-
 });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.get('/urls', (req, res) => {
@@ -120,7 +114,6 @@ app.get('/urls/:shortURL', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const user = users[req.cookies["user_id"]];
   if (user) {
-
     const longUrl = urlDatabase[req.params.shortURL];
     res.redirect(longUrl);
   } else {
@@ -134,7 +127,6 @@ app.post('/register', (req, res) => {
   if (email === "" || password === "") {
     res.statusCode = 400;
     res.send("<html><body><h3>email and password fields can't be empty</h3></body></html>");
-
   } else if (getUserId(email).length) {
     res.statusCode = 400;
     res.send(`The email ${email} already exists`);
@@ -187,7 +179,6 @@ app.post('/login', (req, res) => {
   const userId = getUserId(email);
   if (email === "" || password === "") {
     res.send("<html><body><h3>Username and password can't be empty</h3></body></html>");
-
   } else if (userId.length === 0) {
     res.statusCode = 403;
     res.send(`The user with email address ${email} is not found, please make sure to register first!`);
@@ -206,4 +197,3 @@ app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('/urls');
 });
-
