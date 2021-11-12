@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const keygrip = require('keygrip');
-
+const {getUserByEmail} = require('./helpers');
 const app = express();
 app.set("view engine", "ejs");
 
@@ -40,10 +40,6 @@ const generateRandomString = function() {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
-};
-
-const getUserByEmail = function(email, users) {
-  return Object.keys(users).filter(id => users[id].email === email);
 };
 
 const urlsForUser = function(id) {
